@@ -41,6 +41,8 @@
     class Mole {
       constructor(moleEl, actionIntervalMs, disappearAfterMs) {
         this.moleEl = moleEl
+        this.moleEl.addEventListener("mousedown", this.handleMouseDown.bind(this))
+        this.moleEl.addEventListener("click", this.handleClick.bind(this))
         this.actionIntervalMs = actionIntervalMs
         this.disappearAfterMs = disappearAfterMs
         this.interval = null
@@ -69,6 +71,17 @@
         clearInterval(this.interval)
         this.timer = null
         this.interval = null
+      }
+
+      handleMouseDown(event) {
+        this.moleEl.style.cursor = 'url("./portrait.png") 25 25, auto'
+      }
+
+      handleClick(event) {
+        // cancle timer and make it disappear immediately
+        this.end()
+        this.disappear()
+        this.start()
       }
     }
 
