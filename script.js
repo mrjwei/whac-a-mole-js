@@ -1,4 +1,4 @@
-class Mole extends HTMLElement {
+class Unit extends HTMLElement {
   constructor() {
     super()
 
@@ -86,12 +86,12 @@ class Mole extends HTMLElement {
   }
 }
 
-customElements.define("mole-element", Mole)
+customElements.define("unit-element", Unit)
 
 let moles = []
 
 Array.from({length: 9}).forEach(i => {
-  const mole = document.createElement("mole-element")
+  const mole = document.createElement("unit-element")
   moles.push(mole)
 })
 document.querySelector("#moles").append(...moles)
