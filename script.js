@@ -2,6 +2,19 @@ let score = 0
 const scoreEl = document.querySelector("#score")
 scoreEl.textContent = score
 
+let seconds = 30
+const secondsEl = document.querySelector("#seconds")
+secondsEl.textContent = seconds
+
+let interval = setInterval(() => {
+  if (seconds === 0) {
+    clearInterval(interval)
+    return
+  }
+  seconds -= 1
+  secondsEl.textContent = seconds
+}, 1000)
+
 class Mole extends HTMLElement {
   constructor() {
     super()
