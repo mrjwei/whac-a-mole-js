@@ -1,4 +1,4 @@
-class Unit extends HTMLElement {
+class Mole extends HTMLElement {
   constructor() {
     super()
 
@@ -8,33 +8,15 @@ class Unit extends HTMLElement {
     this.actionIntervalMs = 2000 + Math.random() * 3000
     this.disappearAfterMs = 2000
 
-    this.attachShadow({mode: 'open'})
+    this.attachShadow({mode: "open"})
 
     this.mole = document.createElement("div")
     this.mole.setAttribute("class", "mole")
     this.mole.addEventListener("click", this.handleClick.bind(this))
     this.mole.addEventListener("mousedown", this.handleMouseDown.bind(this))
 
-    const unit = document.createElement("div")
-    unit.setAttribute("class", "unit")
-    const hole = document.createElement("div")
-    hole.setAttribute("class", "hole")
     const style = document.createElement("style")
     style.textContent = `
-      .unit {
-        width: 100px;
-        height: 100px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        overflow-y: hidden;
-        position: relative;
-      }
-      .hole {
-        height: 50px;
-        background-color: black;
-        border-radius: 50%;
-      }
       .mole {
         width: 30px;
         height: 80px;
@@ -46,11 +28,8 @@ class Unit extends HTMLElement {
         transition: all 0.1s ease-in;
       }
     `
-    hole.appendChild(this.mole)
-    unit.appendChild(hole)
-    this.shadowRoot.append(style, unit)
+    this.shadowRoot.append(style, this.mole)
   }
-
   appear() {
     this.mole.style.bottom = 0
   }
@@ -86,17 +65,70 @@ class Unit extends HTMLElement {
   }
 }
 
+customElements.define("mole-element", Mole)
+
+class Hole extends HTMLElement {
+  constructor() {
+    super()
+
+    this.attachShadow({mode: 'open'})
+
+    const hole = document.createElement("div")
+    hole.setAttribute("class", "hole")
+
+    const style = document.createElement("style")
+    style.textContent = `
+      .hole {
+        height: 50px;
+        background-color: black;
+        border-radius: 50%;
+      }
+    `
+    this.shadowRoot.append(style, hole)
+  }
+}
+
+customElements.define("hole-element", Hole)
+
+class Unit extends HTMLElement {
+  constructor() {
+    super()
+
+    this.attachShadow({mode: 'open'})
+
+    this.mole = document.createElement("mole-element")
+    const hole = document.createElement("hole-element")
+
+    const unit = document.createElement("div")
+    unit.setAttribute("class", "unit")
+    const style = document.createElement("style")
+    style.textContent = `
+      .unit {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        overflow-y: hidden;
+        position: relative;
+      }
+    `
+    unit.append(hole, this.mole)
+    this.shadowRoot.append(style, unit)
+  }
+}
+
 customElements.define("unit-element", Unit)
 
-let moles = []
+let units = []
 
 Array.from({length: 9}).forEach(i => {
-  const mole = document.createElement("unit-element")
-  moles.push(mole)
+  const unit = document.createElement("unit-element")
+  units.push(unit)
 })
-document.querySelector("#moles").append(...moles)
+document.querySelector("#units").append(...units)
 
-moles.forEach(mole => {
+units.map(unit => unit.mole).forEach(mole => {
   if (mole.interval === null || mole.timer === null) {
     mole.interval = setInterval(() => {
       mole.appear()
