@@ -1,20 +1,62 @@
-class Mole {
-  constructor(moleEl, actionIntervalMs, disappearAfterMs) {
-    this.moleEl = moleEl
-    this.moleEl.addEventListener("mousedown", this.handleMouseDown.bind(this))
-    this.moleEl.addEventListener("click", this.handleClick.bind(this))
-    this.actionIntervalMs = actionIntervalMs
-    this.disappearAfterMs = disappearAfterMs
-    this.interval = null
+class Mole extends HTMLElement {
+  constructor() {
+    super()
+
     this.timer = null
+    this.interval = null
+
+    this.actionIntervalMs = 2000 + Math.random() * 3000
+    this.disappearAfterMs = 2000
+
+    this.attachShadow({mode: 'open'})
+
+    this.mole = document.createElement("div")
+    this.mole.setAttribute("class", "mole")
+    this.mole.addEventListener("click", this.handleClick.bind(this))
+    this.mole.addEventListener("mousedown", this.handleMouseDown.bind(this))
+
+    const unit = document.createElement("div")
+    unit.setAttribute("class", "unit")
+    const hole = document.createElement("div")
+    hole.setAttribute("class", "hole")
+    const style = document.createElement("style")
+    style.textContent = `
+      .unit {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        overflow-y: hidden;
+        position: relative;
+      }
+      .hole {
+        height: 50px;
+        background-color: black;
+        border-radius: 50%;
+      }
+      .mole {
+        width: 30px;
+        height: 80px;
+        background-color: green;
+        position: absolute;
+        bottom: -100%;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: all 0.1s ease-in;
+      }
+    `
+    hole.appendChild(this.mole)
+    unit.appendChild(hole)
+    this.shadowRoot.append(style, unit)
   }
 
   appear() {
-    this.moleEl.style.bottom = 0
+    this.mole.style.bottom = 0
   }
 
   disappear() {
-    this.moleEl.style.bottom = "-100%"
+    this.mole.style.bottom = "-100%"
   }
 
   start() {
@@ -34,66 +76,33 @@ class Mole {
   }
 
   handleMouseDown(event) {
-    this.moleEl.style.cursor = 'url("./portrait.png") 25 25, auto'
+    this.mole.style.cursor = 'url("./portrait.png") 25 25, auto'
   }
 
   handleClick(event) {
-    // cancle timer and make it disappear immediately
     this.end()
     this.disappear()
     this.start()
   }
 }
 
-const container = document.querySelector(".container")
-// create holes and moles
-Array.from({length: 9}).forEach(obj => {
-  const unit = document.createElement("div")
-  unit.classList.add("unit")
-  const hole = document.createElement("div")
-  hole.classList.add("hole")
-  const mole = document.createElement("div")
-  mole.classList.add("mole")
-  hole.appendChild(mole)
-  unit.appendChild(hole)
-  container.appendChild(unit)
-})
+customElements.define("mole-element", Mole)
 
 let moles = []
-const moleEls = document.querySelectorAll(".mole")
-moleEls.forEach(moleEl => {
-  const mole = new Mole(moleEl, 2000 + Math.random() * 3000, 2000)
-  mole.start()
+
+Array.from({length: 9}).forEach(i => {
+  const mole = document.createElement("mole-element")
   moles.push(mole)
 })
+document.querySelector("#moles").append(...moles)
 
-let hidden, visibilityChange;
-if (typeof document.hidden !== "undefined") {
-  hidden = "hidden";
-  visibilityChange = "visibilitychange";
-} else if (typeof document.msHidden !== "undefined") {
-  hidden = "msHidden";
-  visibilityChange = "msvisibilitychange";
-} else if (typeof document.webkitHidden !== "undefined") {
-  hidden = "webkitHidden";
-  visibilityChange = "webkitvisibilitychange";
-}
-
-document.addEventListener(visibilityChange, () => {
-  if (document[hidden]) {
-    moles.forEach(mole => {
-      mole.end()
-    })
-    } else {
-      moles.forEach(mole => {
-        if (mole.interval === null || mole.timer === null) {
-          mole.interval = setInterval(() => {
-            mole.appear()
-            mole.timer = setTimeout(() => {
-              mole.disappear()
-            }, mole.disappearAfterMs)
-          }, mole.actionIntervalMs)
-        }
-      })
-    }
- })
+moles.forEach(mole => {
+  if (mole.interval === null || mole.timer === null) {
+    mole.interval = setInterval(() => {
+      mole.appear()
+      mole.timer = setTimeout(() => {
+        mole.disappear()
+      }, mole.disappearAfterMs)
+    }, mole.actionIntervalMs)
+  }
+})
