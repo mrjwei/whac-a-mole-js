@@ -47,7 +47,7 @@ class Mole {
 
 const container = document.querySelector(".container")
 // create holes and moles
-Array.from({length: 3}).forEach(obj => {
+Array.from({length: 9}).forEach(obj => {
   const unit = document.createElement("div")
   unit.classList.add("unit")
   const hole = document.createElement("div")
