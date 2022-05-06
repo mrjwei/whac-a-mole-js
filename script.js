@@ -26,18 +26,38 @@ const scoreBoard = document.createElement("score-board")
 
 document.querySelector("#score").appendChild(scoreBoard)
 
-let seconds = 30
-const secondsEl = document.querySelector("#seconds")
-secondsEl.textContent = seconds
 
-let interval = setInterval(() => {
-  if (seconds === 0) {
-    clearInterval(interval)
-    return
+class Timer extends HTMLElement {
+  constructor() {
+    super()
+
+    this.seconds = 30
+
+    this.attachShadow({mode: "open"})
+
+    this.span = document.createElement("span")
+    this.span.textContent = this.seconds
+    const style = document.createElement("style")
+    style.textContent = ``
+    this.shadowRoot.append(style, this.span)
+
+    this.interval = setInterval(() => {
+      if (this.seconds === 0) {
+        clearInterval(this.interval)
+        return
+      }
+      this.seconds -= 1
+      this.span.textContent = this.seconds
+    }, 1000)
   }
-  seconds -= 1
-  secondsEl.textContent = seconds
-}, 1000)
+}
+
+customElements.define("timer-element", Timer)
+
+const timer = document.createElement("timer-element")
+
+document.querySelector("#seconds").appendChild(timer)
+
 
 class Mole extends HTMLElement {
   constructor() {
