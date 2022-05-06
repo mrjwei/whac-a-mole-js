@@ -1,6 +1,30 @@
-let score = 0
-const scoreEl = document.querySelector("#score")
-scoreEl.textContent = score
+class ScoreBoard extends HTMLElement {
+  constructor() {
+    super()
+
+    this.score = 0
+
+    this.attachShadow({mode: "open"})
+
+    this.span = document.createElement("span")
+    this.span.textContent = this.score
+    const style = document.createElement("style")
+    style.textContent = ``
+    this.shadowRoot.append(style, this.span)
+  }
+
+  increment() {
+    this.score += 10
+    this.span.textContent = this.score
+  }
+}
+
+
+customElements.define("score-board", ScoreBoard)
+
+const scoreBoard = document.createElement("score-board")
+
+document.querySelector("#score").appendChild(scoreBoard)
 
 let seconds = 30
 const secondsEl = document.querySelector("#seconds")
@@ -80,8 +104,7 @@ class Mole extends HTMLElement {
     this.disappear()
     this.start()
 
-    score += 10
-    scoreEl.textContent = score
+    scoreBoard.increment()
   }
 }
 
