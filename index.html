@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <title>Document</title>
   <style>
-    .container {
+    header {
       display: flex;
       justify-content: space-between;
+    }
+    .container {
+      width: 500px;
+      margin: 0 auto;
     }
     .unit {
       width: 100px;
@@ -36,6 +40,17 @@
 </head>
 <body>
   <div class="container">
+    <header>
+      <p>
+        <span>Score: </span>
+        <span id="score"></span>
+      </p>
+      <p>
+        <span>Time Left: </span>
+        <span id="seconds"></span>
+      </p>
+    </header>
+    <div id="moles"></div>
   </div>
   <script src="script.js"></script>
 </body>
