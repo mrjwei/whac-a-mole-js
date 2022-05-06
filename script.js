@@ -1,3 +1,7 @@
+let score = 0
+const scoreEl = document.querySelector("#score")
+scoreEl.textContent = score
+
 class Mole extends HTMLElement {
   constructor() {
     super()
@@ -62,6 +66,9 @@ class Mole extends HTMLElement {
     this.end()
     this.disappear()
     this.start()
+
+    score += 10
+    scoreEl.textContent = score
   }
 }
 
